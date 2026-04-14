@@ -52,7 +52,7 @@ It combines document retrieval with generative AI to produce context-aware answe
                  
 
 4. Ollama setup
-    4.1 Isntall Illama (https://ollama.com)
+    4.1 Isntall ollama (https://ollama.com)
     4.2 Pull reqirements in Terminal
         ollama pull phi3
         ollama pull nomic-embed-text
