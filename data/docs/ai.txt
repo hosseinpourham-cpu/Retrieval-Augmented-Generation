@@ -1,0 +1,17 @@
+Retrieval-Augmented Generation (RAG) is a technique that combines retrieval and generation.
+
+It works by retrieving relevant documents from a knowledge base and using them as context for a language model.
+
+Chunking splits documents into smaller pieces so that retrieval can be more precise.
+
+Embeddings convert text into vectors that represent semantic meaning.
+
+Vector databases store these embeddings and allow similarity search.
+
+Agents extend LLMs by enabling them to use tools and perform multi-step reasoning.
+
+Distributed systems allow scaling of AI pipelines.
+
+Optimization techniques improve performance and efficiency.
+
+Machine learning models learn patterns from data and generalize to new inputs.

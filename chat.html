@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>RAG Chat</title>
+<style>
+body {
+  background: #0f0f1f;
+  font-family: 'Segoe UI', sans-serif;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  margin: 0;
+}
+
+#chat-container {
+  width: 90%; /* The main chat area will take 90% of screen width */
+  max-width: 1200px; /* Optional: limit max width */
+  border-radius: 20px;
+  padding: 20px;
+  background: linear-gradient(145deg, #1a1a2e, #111123);
+  color: #fff;
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  box-shadow: 0 0 20px rgba(0,0,0,0.5);
+}
+
+#messages {
+  flex-grow: 1;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.message {
+  padding: 12px 18px;
+  border-radius: 20px;
+  max-width: 80%;
+  opacity: 0;
+  animation: fadeIn 0.3s forwards;
+}
+
+.user {
+  align-self: flex-end;
+  background: linear-gradient(120deg, #4facfe, #00f2fe);
+  color: #fff;
+}
+
+.bot {
+  align-self: flex-start;
+  background: linear-gradient(120deg, #6e7cff, #a29bfe);
+  color: #fff;
+}
+
+@keyframes fadeIn {
+  to { opacity: 1; }
+}
+
+#typing-indicator {
+  display: flex;
+  gap: 4px;
+  margin-left: 4px;
+}
+
+#typing-indicator span {
+  display: inline-block;
+  width: 10px;
+  height: 10px;
+  background: #ccc;
+  border-radius: 50%;
+  animation: blink 1.4s infinite both;
+}
+
+#typing-indicator span:nth-child(1) { animation-delay: 0s; }
+#typing-indicator span:nth-child(2) { animation-delay: 0.2s; }
+#typing-indicator span:nth-child(3) { animation-delay: 0.4s; }
+
+@keyframes blink {
+  0%, 80%, 100% { opacity: 0; }
+  40% { opacity: 1; }
+}
+
+#input-container {
+  display: flex;
+  gap: 10px;
+}
+
+#user-input {
+  flex-grow: 1;
+  padding: 12px;
+  border-radius: 20px;
+  border: none;
+  background: #22223b;
+  color: #fff;
+  font-size: 14px;
+}
+
+#user-input:focus { outline: none; }
+
+#send-btn {
+  padding: 12px 18px;
+  border-radius: 20px;
+  background: #4facfe;
+  border: none;
+  color: white;
+  font-weight: bold;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+#send-btn:hover {
+  background: #00f2fe;
+}
+</style>
+</head>
+<body>
+
+<div id="chat-container">
+  <div id="messages"></div>
+  <div id="typing-indicator" style="display:none;">
+    <span></span><span></span><span></span>
+  </div>
+  <div id="input-container">
+    <input id="user-input" placeholder="Ask me anything..." />
+    <button id="send-btn">Send</button>
+  </div>
+</div>
+
+<script>
+const messagesDiv = document.getElementById("messages");
+const typingDiv = document.getElementById("typing-indicator");
+const input = document.getElementById("user-input");
+const sendBtn = document.getElementById("send-btn");
+
+// Send message function
+async function sendMessage() {
+  const query = input.value.trim();
+  if (!query) return;
+
+  // Show user's message
+  const userMsg = document.createElement("div");
+  userMsg.className = "message user";
+  userMsg.textContent = query;
+  messagesDiv.appendChild(userMsg);
+
+  input.value = "";
+  messagesDiv.scrollTop = messagesDiv.scrollHeight;
+
+  // Show typing indicator
+  typingDiv.style.display = "flex";
+
+  try {
+    const res = await fetch("http://127.0.0.1:8000/ask", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ query })
+    });
+    const data = await res.json();
+
+    typingDiv.style.display = "none";
+
+    const botMsg = document.createElement("div");
+    botMsg.className = "message bot";
+    botMsg.textContent = data.answer;
+    messagesDiv.appendChild(botMsg);
+    messagesDiv.scrollTop = messagesDiv.scrollHeight;
+
+  } catch (err) {
+    typingDiv.style.display = "none";
+    const botMsg = document.createElement("div");
+    botMsg.className = "message bot";
+    botMsg.textContent = "Error contacting server.";
+    messagesDiv.appendChild(botMsg);
+  }
+}
+
+// Button click
+sendBtn.addEventListener("click", sendMessage);
+
+// Enter key to send
+input.addEventListener("keypress", (e) => {
+  if (e.key === "Enter") sendMessage();
+});
+</script>
+
+</body>
+</html>
