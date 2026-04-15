@@ -1,4 +1,5 @@
-1. project overview
+1. Project Overview
+   
 This project implements a multi-step adaptive RAG agent that dynamically selects the best strategy to answer a query.
 The agent is currently implemented in a single module (rag_agent.py) for developement speed, 
 and can be modularized into components(retrieval, reranking, generation, tools)
